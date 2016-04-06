@@ -167,16 +167,6 @@ router.route('/tasks')
 
     res.json({result: 'accepted', taskId: id});
     console.log('POST tasks complete');
-})
-
-// DEL /tasks/:task_id  terminate and delete a task
-.delete(function(req, res) {
-    // find task by id
-    videoTask.findById(req.params.task_id, function(err, task){
-        if (err) res.send('Error finding task by id.');
-
-        //TODO
-    });
 });
 
 // status enquiry by taskId
@@ -237,8 +227,24 @@ router.route('/tasks/:taskId')
             res.json({result: 'complete', url: url});
         }
     });
-});
+})
+// DEL /tasks/:task_id  terminate and delete a task
+.delete(function(req, res) {
+    // find task by id
+    var id = parstInt(req.params.task_id, 10);
+    videoTask.remove({taskId: id}, function(err, doc){
+        if (err) {
+            res.send('Error finding task by id.');
+            return;
+        }
 
+        taskArray.forEach(function(task, index){
+            if (task.id === id) {
+                //TODO: kill child-process
+            }
+        });
+    });
+});
 
 app.use('/', router);
 app.listen(port);
