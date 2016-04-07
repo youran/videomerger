@@ -75,6 +75,8 @@ var doConversion = function(callback) { // if not in H.264 + AAC format, convert
 
 	// do the conversion if necessary
 	if (needConvertFlag === true) {
+		var total = fileList.length;
+		var finished = 0;
 		fileList.forEach(function(entry, index){
 			var cmd = ffmpeg(entry);
 			cmd.outputOptions('-movflags faststart');
@@ -96,7 +98,10 @@ var doConversion = function(callback) { // if not in H.264 + AAC format, convert
 				})
 				.on('end', function() {
 					console.log('Conversion finished !');
-					convertedFlag = true;
+					finished++;
+					if (finished === total) {
+						convertedFlag = true;
+					}
 				});
 			console.log('ready to convert. vCodec=' + vCodec + ', aCodec=' + aCodec + ', bitRate=' + bitRate);
 			cmd.save(entry + '.mp4');
